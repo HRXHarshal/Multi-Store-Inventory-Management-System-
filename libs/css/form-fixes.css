@@ -1,0 +1,42 @@
+/* Form visibility fixes */
+.form-control {
+  color: #333 !important;
+  background-color: #fff !important;
+  border: 2px solid #aaa !important;
+}
+
+input.form-control:focus, 
+select.form-control:focus,
+textarea.form-control:focus {
+  border-color: #3498DB !important;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.6) !important;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  color: #333 !important;
+  background-color: #fff !important;
+}
+
+::placeholder {
+  color: #999 !important;
+  opacity: 1;
+}
+
+/* Panel styling improvements */
+.panel-body {
+  background-color: #fff !important;
+}
+
+.panel-default {
+  border-color: #ddd !important;
+}
+
+.panel-heading {
+  color: #333 !important;
+}

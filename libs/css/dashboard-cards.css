@@ -1,0 +1,99 @@
+/* Modern Dashboard Cards Styling */
+.dashboard-stats {
+  padding: 15px 0;
+}
+
+.card-box {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+  border-left: 4px solid #6a5af9;
+  display: flex;
+  align-items: center;
+}
+
+.card-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-box.users {
+  border-left-color: #6a5af9;
+}
+
+.card-box.categories {
+  border-left-color: #17a2b8;
+}
+
+.card-box.products {
+  border-left-color: #28a745;
+}
+
+.card-box.sales {
+  border-left-color: #ffc107;
+}
+
+.card-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  font-size: 24px;
+}
+
+.card-icon.users {
+  background: rgba(106, 90, 249, 0.1);
+  color: #6a5af9;
+}
+
+.card-icon.categories {
+  background: rgba(23, 162, 184, 0.1);
+  color: #17a2b8;
+}
+
+.card-icon.products {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.card-icon.sales {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-value {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  color: #343a40;
+}
+
+.card-link {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #6a5af9;
+  text-decoration: none;
+}
+
+.card-link:hover {
+  text-decoration: underline;
+}
