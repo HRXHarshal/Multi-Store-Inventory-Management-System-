@@ -70,4 +70,20 @@
         <li><a href="warehouse_sales.php">Sales by Warehouse</a> </li>
       </ul>
   </li>
+  <li>
+    <a href="#" class="submenu-toggle">
+      <i class="glyphicon glyphicon-shopping-cart"></i>
+      <span>Purchase Requests</span>
+    </a>
+    <ul class="nav submenu">
+      <li><a href="purchase_requests.php">Manage Requests</a> </li>
+      <li><a href="request_purchase.php">New Request</a> </li>
+    </ul>
+  </li>
+  <li>
+    <a href="customers.php">
+      <i class="glyphicon glyphicon-user"></i>
+      <span>Customers</span>
+    </a>
+  </li>
 </ul>

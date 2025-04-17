@@ -1,0 +1,10 @@
+# Environment variables
+.env
+
+# Composer
+/vendor/
+composer.lock
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -503,4 +503,247 @@ function find_all_sale_with_warehouse(){
   $sql .= "ORDER BY s.date DESC";
   return find_by_sql($sql);
 }
+/*--------------------------------------------------------------*/
+/* Function for finding or creating a customer
+/*--------------------------------------------------------------*/
+function find_or_create_customer($name, $email = '', $phone = '', $address = '') {
+  global $db;
+  
+  // Check if customer exists
+  $sql = "SELECT id FROM customers WHERE ";
+  if(!empty($email)) {
+    $sql .= "email = '{$email}' OR ";
+  }
+  if(!empty($phone)) {
+    $sql .= "phone = '{$phone}' OR ";
+  }
+  $sql .= "name = '{$name}' LIMIT 1";
+  
+  $result = find_by_sql($sql);
+  
+  if(!empty($result)) {
+    return $result[0]['id'];
+  } else {
+    // Create new customer
+    $date = make_date();
+    $sql = "INSERT INTO customers (name, email, phone, address, date_added) VALUES (";
+    $sql .= "'{$name}', '{$email}', '{$phone}', '{$address}', '{$date}'";
+    $sql .= ")";
+    
+    if($db->query($sql)) {
+      return $db->insert_id();
+    }
+  }
+  return false;
+}
+
+/*--------------------------------------------------------------*/
+/* Function for creating a new purchase request
+/*--------------------------------------------------------------*/
+function create_purchase_request($customer_id, $product_id, $quantity, $notes = '') {
+  global $db;
+  $date = make_date();
+  
+  $sql = "INSERT INTO purchase_requests (";
+  $sql .= "customer_id, product_id, quantity, status, request_date, notes";
+  $sql .= ") VALUES (";
+  $sql .= "'{$customer_id}', '{$product_id}', '{$quantity}', 'new', '{$date}', '{$notes}'";
+  $sql .= ")";
+  
+  if($db->query($sql)) {
+    $request_id = $db->insert_id();
+    // Automatically assign to an employee
+    assign_purchase_request($request_id);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/*--------------------------------------------------------------*/
+/* Function for assigning purchase request to employee with lowest workload
+/*--------------------------------------------------------------*/
+function assign_purchase_request($request_id) {
+  global $db;
+  
+  // Get all active level 3 users (employees)
+  $sql = "SELECT id FROM users WHERE user_level = 3 AND status = 1";
+  $employees = find_by_sql($sql);
+  
+  if(empty($employees)) {
+    // No employees available
+    return false;
+  }
+  
+  // Find employee with lowest workload
+  $selected_employee = null;
+  $lowest_workload = PHP_INT_MAX;
+  
+  foreach($employees as $employee) {
+    // Check if employee exists in workload table
+    $sql = "SELECT active_assignments FROM employee_workload WHERE user_id = '{$employee['id']}'";
+    $result = find_by_sql($sql);
+    
+    if(empty($result)) {
+      // Employee not in workload table, add them
+      $sql = "INSERT INTO employee_workload (user_id, active_assignments) VALUES ('{$employee['id']}', 0)";
+      $db->query($sql);
+      $current_workload = 0;
+    } else {
+      $current_workload = $result[0]['active_assignments'];
+    }
+    
+    if($current_workload < $lowest_workload) {
+      $lowest_workload = $current_workload;
+      $selected_employee = $employee['id'];
+    }
+  }
+  
+  if($selected_employee) {
+    // Assign request to selected employee
+    $sql = "UPDATE purchase_requests SET status = 'assigned', assigned_to = '{$selected_employee}' ";
+    $sql .= "WHERE id = '{$request_id}'";
+    $db->query($sql);
+    
+    // Update employee workload
+    $sql = "UPDATE employee_workload SET active_assignments = active_assignments + 1, ";
+    $sql .= "total_assignments = total_assignments + 1 WHERE user_id = '{$selected_employee}'";
+    $db->query($sql);
+    
+    return $selected_employee;
+  }
+  
+  return false;
+}
+
+/*--------------------------------------------------------------*/
+/* Function for completing a purchase request
+/*--------------------------------------------------------------*/
+function complete_purchase_request($request_id) {
+  global $db;
+  $date = make_date();
+  
+  // Get request details
+  $sql = "SELECT r.*, p.name as product_name, p.warehouse_id, p.sale_price,
+          c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
+          w.name as warehouse_name
+          FROM purchase_requests r 
+          JOIN products p ON p.id = r.product_id 
+          JOIN customers c ON c.id = r.customer_id
+          JOIN warehouses w ON w.id = p.warehouse_id
+          WHERE r.id = '{$request_id}'";
+  $result = find_by_sql($sql);
+  
+  if(empty($result)) {
+    return false;
+  }
+  
+  $request = $result[0];
+  
+  // Check if request is already completed
+  if($request['status'] === 'completed') {
+    return false;
+  }
+  
+  $employee_id = $request['assigned_to'];
+  $product_id = $request['product_id'];
+  $quantity = $request['quantity'];
+  $price = $request['sale_price'];
+  
+  // Begin transaction to ensure data integrity
+  $db->query("START TRANSACTION");
+  
+  // 1. Update product quantity in warehouse
+  $sql = "UPDATE products SET quantity = quantity - {$quantity} 
+          WHERE id = '{$product_id}'";
+  $result1 = $db->query($sql);
+  
+  // 2. Add entry to sales table
+  $sql = "INSERT INTO sales (product_id, qty, price, date) 
+          VALUES ('{$product_id}', '{$quantity}', '{$price}', '{$date}')";
+  $result2 = $db->query($sql);
+  
+  // 3. Update request status
+  $sql = "UPDATE purchase_requests SET status = 'completed', completion_date = '{$date}' 
+          WHERE id = '{$request_id}'";
+  $result3 = $db->query($sql);
+  
+  // 4. Update employee workload - use GREATEST to prevent negative values
+  $sql = "UPDATE employee_workload SET 
+          active_assignments = GREATEST(0, active_assignments - 1), 
+          completed_assignments = completed_assignments + 1 
+          WHERE user_id = '{$employee_id}'";
+  $result4 = $db->query($sql);
+  
+  // Commit or rollback transaction based on success
+  if($result1 && $result2 && $result3 && $result4) {
+    $db->query("COMMIT");
+    
+    // Send confirmation email to customer
+    require_once('email_functions.php');
+    
+    $order_details = [
+      'request_id' => $request_id,
+      'product_name' => $request['product_name'],
+      'quantity' => $quantity,
+      'warehouse_name' => $request['warehouse_name'],
+      'notes' => $request['notes']
+    ];
+    
+    send_order_confirmation_email(
+      $request['customer_email'],
+      $request['customer_name'],
+      $order_details
+    );
+    
+    return true;
+  } else {
+    $db->query("ROLLBACK");
+    return false;
+  }
+}
+
+/*--------------------------------------------------------------*/
+/* Function for finding all purchase requests
+/*--------------------------------------------------------------*/
+/*--------------------------------------------------------------*/
+/* Function for finding all purchase requests
+/*--------------------------------------------------------------*/
+function find_all_purchase_requests() {
+  global $db;
+  $sql = "SELECT r.*, p.name as product_name, c.name as customer_name, 
+          c.email as customer_email, u.name as employee_name,
+          w.name as warehouse_name
+          FROM purchase_requests r 
+          LEFT JOIN products p ON p.id = r.product_id 
+          LEFT JOIN customers c ON c.id = r.customer_id 
+          LEFT JOIN users u ON u.id = r.assigned_to 
+          LEFT JOIN warehouses w ON w.id = p.warehouse_id
+          ORDER BY r.request_date DESC";
+  return find_by_sql($sql);
+}
+
+/*--------------------------------------------------------------*/
+/* Function for finding purchase requests by employee
+/*--------------------------------------------------------------*/
+function find_purchase_requests_by_employee($employee_id) {
+  global $db;
+  $sql = "SELECT r.*, p.name as product_name, c.name as customer_name, 
+          c.email as customer_email, c.phone as customer_phone 
+          FROM purchase_requests r 
+          LEFT JOIN products p ON p.id = r.product_id 
+          LEFT JOIN customers c ON c.id = r.customer_id 
+          WHERE r.assigned_to = '{$employee_id}' 
+          ORDER BY r.request_date DESC";
+  return find_by_sql($sql);
+}
+
+/*--------------------------------------------------------------*/
+/* Function for finding all customers
+/*--------------------------------------------------------------*/
+function find_all_customers() {
+  global $db;
+  $sql = "SELECT * FROM customers ORDER BY name ASC";
+  return find_by_sql($sql);
+}
 ?>

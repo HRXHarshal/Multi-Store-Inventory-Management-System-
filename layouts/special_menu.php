@@ -27,4 +27,14 @@
       <span>Media</span>
     </a>
   </li>
+  <li>
+    <a href="#" class="submenu-toggle">
+      <i class="glyphicon glyphicon-shopping-cart"></i>
+      <span>Purchase Requests</span>
+    </a>
+    <ul class="nav submenu">
+       <li><a href="my_requests.php">My Assigned Requests</a> </li>
+       <li><a href="request_purchase.php">New Purchase Request</a> </li>
+    </ul>
+  </li>
 </ul>

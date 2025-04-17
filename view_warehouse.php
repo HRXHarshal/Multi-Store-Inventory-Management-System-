@@ -96,21 +96,20 @@
                 <tr>
                   <td class="text-center"><?php echo count_id();?></td>
                   <td>
-                    <?php if($product['media_id'] === '0'): ?>
-                      <img class="img-avatar img-circle" src="uploads/products/no_image.png" alt="">
+                    <?php if($product['media_id'] === '0' || empty($product['image'])): // Check if media_id is 0 OR image filename is empty ?>
+                      <img class="img-avatar img-circle" src="uploads/products/no_image.png" alt="No image available"> <? // Line 100: Default image with descriptive alt text ?>
                     <?php else: ?>
-                      <img class="img-avatar img-circle" src="uploads/products/<?php echo $product['image']; ?>" alt="">
+                      <img class="img-avatar img-circle" src="uploads/products/<?php echo $product['image']; ?>" alt="<?php echo remove_junk($product['name']); ?>"> <? // Line 102: Product image with product name as alt text ?>
                     <?php endif; ?>
                   </td>
-                  <!-- In the table where the error occurs, modify this part: -->
-                                  <td><?php echo remove_junk($product['name']); ?></td>
-                                  <td>
-                                    <?php 
-                                    // Check if category key exists before trying to access it
-                                    echo isset($product['category']) ? remove_junk($product['category']) : 'N/A'; 
-                                    ?>
-                                  </td>
-                                  <td class="text-center"><?php echo remove_junk($product['quantity']); ?></td>
+                  <td><?php echo remove_junk($product['name']); ?></td>
+                  <td>
+                    <?php 
+                    // Check if category key exists before trying to access it
+                    echo isset($product['category']) ? remove_junk($product['category']) : 'N/A'; 
+                    ?>
+                  </td>
+                  <td class="text-center"><?php echo remove_junk($product['quantity']); ?></td>
                   <td class="text-center"><?php echo remove_junk($product['buy_price']); ?></td>
                   <td class="text-center"><?php echo remove_junk($product['sale_price']); ?></td>
                   <td class="text-center"><?php echo read_date($product['date']); ?></td>
