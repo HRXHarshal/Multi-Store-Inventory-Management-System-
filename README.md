@@ -2,138 +2,143 @@
 
 ## Overview
 
-This project is a comprehensive web-based Inventory Management System built using PHP and MySQL. It provides functionalities for managing products, categories, warehouses, sales, customer purchase requests with secure verification, employee task assignments, and reporting.
+MultiWarehouse IMS is a comprehensive web-based Inventory Management System built using PHP and MySQL. It facilitates efficient management of products, categories, multiple warehouses, sales, and inventory levels. Key features include a secure customer purchase request system using OTP email verification via SendGrid, role-based access control, and employee task assignment for order fulfillment with workload tracking.
 
-## Problem Statement
+## Key Features
 
-Businesses often face challenges with:
-*   Inaccurate inventory tracking leading to stockouts or overstocking.
-*   Inefficient and insecure handling of customer purchase orders.
-*   Lack of visibility into stock levels across multiple locations.
-*   Difficulty in assigning and tracking order fulfillment tasks among employees.
-*   Manual processes for inventory transfers and sales recording.
-
-This system aims to solve these problems by providing a centralized, automated, and secure platform.
-
-## Features
-
-*   **Dashboard:** Overview of key metrics (total products, sales, categories, etc.), recent sales, and low stock items.
-*   **User Management:** Multi-level user roles (Admin, Special User, Employee) with distinct permissions. Secure login and profile management.
-*   **Product Management:** Add, edit, delete products with details like name, quantity, pricing, category, warehouse, and image.
+*   **Dashboard:** At-a-glance view of key metrics like total sales, product count, category count, and customer count.
+*   **Product Management:** Add, edit, delete, and view products, including details like quantity, buying price, selling price, category, and warehouse location.
 *   **Category Management:** Organize products into categories.
-*   **Warehouse Management:** Manage multiple warehouse locations, view stock per warehouse.
-*   **Customer Management:** Maintain customer records (name, email, phone, address).
-*   **Purchase Request System:**
-    *   Customer-facing interface to submit purchase requests.
-    *   **Secure OTP Email Verification:** Ensures request validity via One-Time Password sent to the customer's email.
-    *   Admin/Special User can view, manage, and assign verified requests.
-    *   Track request status (Pending, Verified, Assigned, Completed, Cancelled).
-*   **Employee Workload Management:** Assign requests to employees and view current workload during reassignment for balanced distribution.
-*   **Sales Management:** Automatically records sales upon completion of purchase requests. Track sales history.
-*   **Inventory Transfers:** Record and track stock movement between warehouses.
-*   **Reporting:** Generate sales reports (daily, monthly, date range) and inventory status reports.
-*   **Email Notifications:** Automated emails for OTP verification and order confirmation using SendGrid.
+*   **Warehouse Management:** Manage multiple warehouse locations.
+*   **Sales Management:** Track sales, view sales reports (daily, weekly, monthly), and manage customer orders.
+*   **Customer Purchase Requests:** Allows customers to submit purchase requests directly through the system.
+*   **OTP Email Verification:** Secures customer requests by sending a One-Time Password (OTP) to the customer's email for verification before processing the order.
+*   **Employee Task Assignment:** Admins can assign order fulfillment tasks to specific employees.
+*   **Employee Workload Tracking:** Monitor the number of pending tasks assigned to each employee.
+*   **Role-Based Access Control:** Different user roles (Admin, Special User, Employee) with specific permissions.
+*   **Reporting:** Generate sales and inventory reports.
 
-## Unique Selling Points (USP) / Novelty
+## Screenshots
 
-*   **Integrated Customer Purchase Request System:** Directly links customer demand with internal inventory and fulfillment processes.
-*   **Secure OTP Verification:** Adds a crucial security layer to customer requests, validating email and intent.
-*   **Intelligent Employee Workload Management:** Facilitates balanced task assignment based on real-time workload visibility.
-*   **End-to-End Workflow:** Provides a seamless, secure flow from customer request initiation to final order completion and notification.
+Here's a glimpse of the system:
 
-## Technology Stack
+**1. Login Page**
+![Login Page](./screenshots/login.png)
 
-*   **Backend:** PHP (Procedural with functional decomposition)
+**2. Admin Dashboard**
+![Admin Dashboard](./screenshots/admin_dashboard.png)
+
+**3. Product Management**
+![Product Management](./screenshots/product_management.png)
+
+**4. Sales Report**
+![Sales Report](./screenshots/sales_report.png)
+
+**5. Customer Purchase Request**
+![Customer Purchase Request](./screenshots/customer_request.png)
+
+**6. OTP Verification**
+![OTP Verification](./screenshots/otp_verification.png)
+
+**7. Employee Task Assignment (Admin View)**
+![Employee Task Assignment](./screenshots/employee_tasks.png)
+
+**8. Employee Dashboard (Task View)**
+![Employee Dashboard](./screenshots/employee_dashboard.png)
+
+## Tech Stack
+
+*   **Backend:** PHP
 *   **Database:** MySQL
-*   **Web Server:** Apache (Typically run via XAMPP)
-*   **Frontend:** HTML, CSS, Bootstrap, JavaScript, jQuery
+*   **Frontend:** HTML, CSS, JavaScript, jQuery, Bootstrap
 *   **Email Service:** SendGrid API
-
-## Architecture
-
-The system follows a layered architecture:
-*   **Presentation Layer:** HTML/CSS/JS rendered by PHP view files (`.php` files in root, `layouts/`).
-*   **Application Layer:** PHP scripts handling requests, business logic (`includes/functions.php`), session management, and controlling data flow.
-*   **Data Access Layer:** PHP functions (`includes/sql.php`, `includes/database.php`) interacting with the MySQL database using the `mysqli` extension.
-*   **External Services:** Integration with SendGrid API for emails (`includes/email_functions.php`).
+*   **Dependency Management:** Composer
+*   **Environment:** XAMPP (Apache, MySQL, PHP)
 
 ## Setup and Installation
 
 ### Prerequisites
 
 *   **XAMPP:** Install XAMPP (or a similar package providing Apache, MySQL, PHP). Download from [https://www.apachefriends.org/](https://www.apachefriends.org/)
-*   **SendGrid Account:** A SendGrid account and API Key are required for email notifications.
+*   **SendGrid Account:** A SendGrid account and API Key are required for email notifications (OTP, confirmations).
 *   **Composer:** Required for PHP dependencies. Download from [https://getcomposer.org/](https://getcomposer.org/)
 
 ### Steps
 
 1.  **Clone or Download:** Place the project files inside your XAMPP `htdocs` directory. The final path should be `c:\xampp\htdocs\InventorySystem_PHP\`.
+    ```bash
+    git clone <your-repository-url> c:\xampp\htdocs\InventorySystem_PHP
+    cd c:\xampp\htdocs\InventorySystem_PHP
+    ```
 
 2.  **Start Servers:** Open the XAMPP Control Panel and start the **Apache** and **MySQL** modules.
 
-3.  **Install Dependencies:** Open a command prompt in the project directory and run:
-    ```
+3.  **Install Dependencies:** Open a command prompt or terminal in the project directory (`c:\xampp\htdocs\InventorySystem_PHP`) and run:
+    ```bash
     composer install
     ```
 
 4.  **Database Setup:**
     *   Open your web browser and navigate to `http://localhost/phpmyadmin/`.
-    *   Create a new database named `inventory_system`.
+    *   Create a new database named `inventory_system` (using `utf8mb4_general_ci` collation is recommended).
     *   Select the `inventory_system` database.
     *   Go to the "Import" tab.
-    *   Click "Choose File" and select the database SQL file (e.g., `inventory_system.sql` - *Note: You might need to export this from your development environment or provide it separately*).
-    *   Click "Go" to import the database structure and any initial data.
+    *   Click "Choose File" and select the database SQL file provided in the repository (e.g., `database/inventory_system.sql` - *Note: Ensure you have this SQL file in your repo*).
+    *   Click "Go" or "Import" to import the database structure and any initial data.
 
 5.  **Environment Configuration:**
     *   Copy the `.env.example` file to create a new file named `.env` in the project root.
-    *   Open the `.env` file and update the following variables:
+        ```bash
+        copy .env.example .env
         ```
-        SENDGRID_API_KEY=YOUR_ACTUAL_SENDGRID_API_KEY
-        SENDGRID_SENDER_EMAIL=your_verified_sender@example.com
-        SENDGRID_SENDER_NAME="Your Name"
+    *   Open the `.env` file and update the following variables with your actual credentials:
+        ```dotenv
+        SENDGRID_API_KEY="YOUR_ACTUAL_SENDGRID_API_KEY"
+        SENDGRID_SENDER_EMAIL="your_verified_sender@example.com"
+        SENDGRID_SENDER_NAME="Your Application Name"
         ```
-    *   Replace the placeholder values with your actual SendGrid API key and sender information.
 
 6.  **Configure Database Credentials (if necessary):**
-    *   Open the file `c:\xampp\htdocs\InventorySystem_PHP\includes\database.php`.
-    *   Verify that the database credentials (host, username, password, database name) match your XAMPP MySQL setup. Default XAMPP usually uses `root` with no password.
+    *   The primary database connection should be configured within `c:\xampp\htdocs\InventorySystem_PHP\includes\database.php`.
+    *   Verify that the credentials match your XAMPP MySQL setup. Default XAMPP usually uses `root` with no password.
     ```php
     define( 'DB_HOST', 'localhost' );
     define( 'DB_USER', 'root' );
     define( 'DB_PASS', '' ); // Default XAMPP password is empty
     define( 'DB_NAME', 'inventory_system' );
     ```
+    *(Alternatively, you could modify the setup to read these from the `.env` file as well for consistency).*
 
-## Running the Application
+7.  **Access the Application:** Open your web browser and navigate to `http://localhost/InventorySystem_PHP/`.
 
-1.  Ensure Apache and MySQL are running via the XAMPP Control Panel.
-2.  Open your web browser and navigate to: `http://localhost/InventorySystem_PHP/`
+## Usage
 
-## Login Credentials
-
-Use the following default credentials (as found in `DATABASE FILE/01 LOGIN DETAILS & PROJECT INFO.txt`):
-
-*   **Admin:**
-    *   Username: `admin`
-    *   Password: `admin`
-*   **Special User:**
-    *   Username: `special`
-    *   Password: `special`
-*   **User (Employee):**
-    *   Username: `user`
-    *   Password: `user`
-
-## Key Workflows
-
-*   **Purchase Request:**
-    1.  Customer accesses the request form (`customer_view.php`).
-    2.  Submits request details (`process_customer_request.php`).
-    3.  Receives OTP via email (`email_functions.php`).
-    4.  Verifies OTP (`verify_purchase.php`).
-    5.  Admin views verified request (`purchase_requests.php`).
-    6.  Admin assigns request to an employee (`reassign_request.php`).
-    7.  Admin approves/completes the request (`approve_request.php`).
-    8.  Stock is updated, sale is recorded, workload adjusted (`complete_purchase_request()` in `functions.php`).
-    9.  Confirmation email sent to customer (`email_functions.php`).
+1.  **Login:** Access the login page and use the credentials for different roles (Admin, Special User, Employee). Default credentials might be provided via the database import or need to be created.
+2.  **Admin:** Manage products, categories, warehouses, view reports, manage users, and assign tasks.
+3.  **Employee:** View assigned tasks and potentially update their status.
+4.  **Customer (via Request Form):** Fill out the purchase request form, receive an OTP via email, and verify the OTP to submit the request.
 
 ## Folder Structure (Simplified)
+nventorySystem_PHP/
+├── admin/              # Admin panel specific files
+├── assets/             # CSS, JS, images (frontend assets)
+├── customer/           # Customer request related files
+├── database/           # SQL dump file(s) (Example location)
+├── employee/           # Employee panel specific files
+├── includes/           # Core PHP files (database, functions, session, etc.)
+├── layouts/            # Header, Footer, Navigation templates
+├── libs/               # Third-party libraries (if not using Composer exclusively)
+├── screenshots/        # Application screenshots
+├── vendor/             # Composer dependencies
+├── .env                # Environment variables (ignored by Git)
+├── .env.example        # Example environment file
+├── .gitignore          # Git ignore rules
+├── composer.json       # Composer configuration
+├── composer.lock       # Composer lock file
+├── index.php           # Main entry point or login redirect
+└── README.md           # This file
+
+```plaintext
+
+*(Note: Please adjust the folder structure details if they differ significantly in your project)*.
+ ```
