@@ -63,23 +63,38 @@ The system follows a layered architecture:
 
 *   **XAMPP:** Install XAMPP (or a similar package providing Apache, MySQL, PHP). Download from [https://www.apachefriends.org/](https://www.apachefriends.org/)
 *   **SendGrid Account:** A SendGrid account and API Key are required for email notifications.
+*   **Composer:** Required for PHP dependencies. Download from [https://getcomposer.org/](https://getcomposer.org/)
 
 ### Steps
 
 1.  **Clone or Download:** Place the project files inside your XAMPP `htdocs` directory. The final path should be `c:\xampp\htdocs\InventorySystem_PHP\`.
+
 2.  **Start Servers:** Open the XAMPP Control Panel and start the **Apache** and **MySQL** modules.
-3.  **Database Setup:**
+
+3.  **Install Dependencies:** Open a command prompt in the project directory and run:
+    ```
+    composer install
+    ```
+
+4.  **Database Setup:**
     *   Open your web browser and navigate to `http://localhost/phpmyadmin/`.
     *   Create a new database named `inventory_system`.
     *   Select the `inventory_system` database.
     *   Go to the "Import" tab.
     *   Click "Choose File" and select the database SQL file (e.g., `inventory_system.sql` - *Note: You might need to export this from your development environment or provide it separately*).
     *   Click "Go" to import the database structure and any initial data.
-4.  **Configure SendGrid API Key:**
-    *   Open the file `c:\xampp\htdocs\InventorySystem_PHP\includes\email_functions.php`.
-    *   Locate the line where the SendGrid API key is set (it might look like `$sendgrid = new \SendGrid('YOUR_SENDGRID_API_KEY');`).
-    *   Replace `'YOUR_SENDGRID_API_KEY'` with your actual SendGrid API key. Save the file.
-5.  **Configure Database Credentials (if necessary):**
+
+5.  **Environment Configuration:**
+    *   Copy the `.env.example` file to create a new file named `.env` in the project root.
+    *   Open the `.env` file and update the following variables:
+        ```
+        SENDGRID_API_KEY=YOUR_ACTUAL_SENDGRID_API_KEY
+        SENDGRID_SENDER_EMAIL=your_verified_sender@example.com
+        SENDGRID_SENDER_NAME="Your Name"
+        ```
+    *   Replace the placeholder values with your actual SendGrid API key and sender information.
+
+6.  **Configure Database Credentials (if necessary):**
     *   Open the file `c:\xampp\htdocs\InventorySystem_PHP\includes\database.php`.
     *   Verify that the database credentials (host, username, password, database name) match your XAMPP MySQL setup. Default XAMPP usually uses `root` with no password.
     ```php
