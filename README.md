@@ -22,29 +22,7 @@ MultiWarehouse IMS is a comprehensive web-based Inventory Management System buil
 
 Here's a glimpse of the system:
 
-**1. Login Page**
-![Login Page](./screenshots/login.png)
-
-**2. Admin Dashboard**
-![Admin Dashboard](./screenshots/admin_dashboard.png)
-
-**3. Product Management**
-![Product Management](./screenshots/product_management.png)
-
-**4. Sales Report**
-![Sales Report](./screenshots/sales_report.png)
-
-**5. Customer Purchase Request**
-![Customer Purchase Request](./screenshots/customer_request.png)
-
-**6. OTP Verification**
-![OTP Verification](./screenshots/otp_verification.png)
-
-**7. Employee Task Assignment (Admin View)**
-![Employee Task Assignment](./screenshots/employee_tasks.png)
-
-**8. Employee Dashboard (Task View)**
-![Employee Dashboard](./screenshots/employee_dashboard.png)
+(.uploads/screenshots/Screenshot 2025-03-25 214738.png)
 
 ## Tech Stack
 
