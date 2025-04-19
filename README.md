@@ -20,9 +20,9 @@ MultiWarehouse IMS is a comprehensive web-based Inventory Management System buil
 
 ## Screenshots
 
-![App Screenshot](https://postimg.cc/XZYJfCgB)
+![App Screenshot]([https://postimg.cc/XZYJfCgB](https://i.postimg.cc/GbfJGqbW/Screenshot-2025-03-25-214738.png))
 
-![App Screenshot](https://postimg.cc/GHnSHJcK)
+![App Screenshot]([https://postimg.cc/GHnSHJcK](https://i.postimg.cc/PrCGV29g/Screenshot-2025-03-24-182533.png))
 
 ## Tech Stack
 
